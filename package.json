@@ -1,0 +1,42 @@
+{
+    "name": "tshacknight-mondora-bot",
+    "description": "POC Bot 4 TS HackNIght",
+    "version": "1.0.3",
+    "license": "Gpl 2",
+    "main": "build/server.js",
+    "engines": {
+        "node": "8",
+        "npm": "5.0.0"
+    },
+    "scripts": {
+        "build": "npm run clean && npm run compile && cp -r ./assets build/",
+        "compile": "node ./node_modules/.bin/babel src --out-dir build -s",
+        "clean": "rm -rf build",
+        "execute": "node build/server.js",
+        "start": "nodemon app.js "
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/gafreax/tshacknight-mondora-bot.git"
+    },
+    "author": "Gabriele Fontana <gabriele.fontana@mondora.com>",
+    "homepage": "https://github.com/gafreax/tshacknight-mondora-bot",
+    "devDependencies": {
+        "sinon": "^4.3.0"
+    },
+    "dependencies": {
+        "axios": "^0.15.3",
+        "babel-cli": "^6.26.0",
+        "babel-eslint": "^8.2.1",
+        "babel-plugin-rewire": "^1.1.0",
+        "babel-preset-env": "^1.6.1",
+        "babel-preset-stage-0": "^6.24.1",
+        "botbuilder": "^3.14.0",
+        "botbuilder-azure": "^3.0.4",
+        "bunyan": "^1.8.5",
+        "bunyan-request": "^1.2.0",
+        "cors": "^2.8.4",
+        "dotenv": "^4.0.0",
+        "express": "^4.16.2"
+    }
+}
