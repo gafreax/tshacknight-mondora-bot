@@ -5,7 +5,8 @@ import {
     IntentDialog,
     ChatConnector,
     AzureTableClient,
-    Session
+    Session,
+    RegExpRecognizer
 } from 'botbuilder';
 import {
     LUIS_RECOGNIZER_URLS,
@@ -22,12 +23,7 @@ import {
     version
 } from '../package.json';
 
-import {
-    action as defaultAction
-} from './dialog/default';
-
 var azure = require('botbuilder-azure');
-import loader from './loader';
 import {
     load
 } from 'dotenv';
@@ -36,7 +32,11 @@ const connector = new ChatConnector({
     appId: MICROSOFT_APP_ID,
     appPassword: MICROSOFT_APP_PASSWORD
 });
-
+const defaultAction = (session, args, next) => {
+    console.log('default action');
+    var rnd = Math.floor(Math.random() * phrase.length + 1);
+    session.endDialog(phrase[rnd]);
+}
 var startBot = () => {
     console.log('Starting bot...');
     var bot = new UniversalBot(connector, defaultAction);
@@ -56,14 +56,13 @@ var startBot = () => {
     });
     bot.recognizer(new LuisRecognizer(LUIS_RECOGNIZER_URLS));
     bot.connector('*', connector);
-    bot.recognizer(new builder.RegExpRecognizer('TestIntent', 'testme'));
+    bot.recognizer(new RegExpRecognizer('TestIntent', 'testme'));
     bot.dialog('TestlDialog', function (session) {
         session.endConversation('Ok, I\'m ALIVE!!.');
     }).triggerAction({
         matches: 'TestIntent'
     });
     console.log('COPMPLETE ');
-    console.log('bot version: ' + version);
     return connector.listen();
 };
 

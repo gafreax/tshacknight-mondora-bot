@@ -1,23 +1,33 @@
-import { UniversalBot, MemoryBotStorage, LuisRecognizer, IntentDialog, ChatConnector, AzureTableClient, Session } from 'botbuilder';
-import { LUIS_RECOGNIZER_URLS, LUIS_INTENTS_THRESHOLD, MICROSOFT_APP_ID, MICROSOFT_APP_PASSWORD, AZURE_STORAGE_KEY, AZURE_TABLE_NAME, AZURE_STORAGE_NAME, DEFAULT_LOCALE } from './config';
+'use strict';
 
-import { version } from '../package.json';
-
-import { action as defaultAction } from './dialog/default';
-
-var azure = require('botbuilder-azure');
-import loader from './loader';
-import { load } from 'dotenv';
-
-const connector = new ChatConnector({
-    appId: MICROSOFT_APP_ID,
-    appPassword: MICROSOFT_APP_PASSWORD
+Object.defineProperty(exports, "__esModule", {
+    value: true
 });
 
-var startBot = () => {
+var _botbuilder = require('botbuilder');
+
+var _config = require('./config');
+
+var _package = require('../package.json');
+
+var _dotenv = require('dotenv');
+
+var azure = require('botbuilder-azure');
+
+
+var connector = new _botbuilder.ChatConnector({
+    appId: _config.MICROSOFT_APP_ID,
+    appPassword: _config.MICROSOFT_APP_PASSWORD
+});
+var defaultAction = function defaultAction(session, args, next) {
+    console.log('default action');
+    var rnd = Math.floor(Math.random() * phrase.length + 1);
+    session.endDialog(phrase[rnd]);
+};
+var startBot = function startBot() {
     console.log('Starting bot...');
-    var bot = new UniversalBot(connector, defaultAction);
-    var azureTableClient = new azure.AzureTableClient(AZURE_TABLE_NAME, AZURE_STORAGE_NAME, AZURE_STORAGE_KEY);
+    var bot = new _botbuilder.UniversalBot(connector, defaultAction);
+    var azureTableClient = new azure.AzureTableClient(_config.AZURE_TABLE_NAME, _config.AZURE_STORAGE_NAME, _config.AZURE_STORAGE_KEY);
     var tableStorage = new azure.AzureBotStorage({
         gzipData: false
     }, azureTableClient);
@@ -26,23 +36,22 @@ var startBot = () => {
     bot.set('persistUserData', true);
 
     bot.set('localizerSettings', {
-        defaultLocale: DEFAULT_LOCALE
+        defaultLocale: _config.DEFAULT_LOCALE
     });
     bot.set('IIntentRecognizerSetOptions', {
-        intentThreshold: LUIS_INTENTS_THRESHOLD
+        intentThreshold: _config.LUIS_INTENTS_THRESHOLD
     });
-    bot.recognizer(new LuisRecognizer(LUIS_RECOGNIZER_URLS));
+    bot.recognizer(new _botbuilder.LuisRecognizer(_config.LUIS_RECOGNIZER_URLS));
     bot.connector('*', connector);
-    bot.recognizer(new builder.RegExpRecognizer('TestIntent', 'testme'));
+    bot.recognizer(new _botbuilder.RegExpRecognizer('TestIntent', 'testme'));
     bot.dialog('TestlDialog', function (session) {
         session.endConversation('Ok, I\'m ALIVE!!.');
     }).triggerAction({
         matches: 'TestIntent'
     });
     console.log('COPMPLETE ');
-    console.log('bot version: ' + version);
     return connector.listen();
 };
 
-export default startBot;
+exports.default = startBot;
 //# sourceMappingURL=bot.js.map

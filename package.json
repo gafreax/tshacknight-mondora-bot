@@ -1,7 +1,7 @@
 {
     "name": "tshacknight-mondora-bot",
     "description": "POC Bot 4 TS HackNIght",
-    "version": "1.0.3",
+    "version": "0.9.0",
     "license": "Gpl 2",
     "main": "build/server.js",
     "engines": {
@@ -26,9 +26,11 @@
     },
     "dependencies": {
         "axios": "^0.15.3",
+        "babel": "^6.23.0",
         "babel-cli": "^6.26.0",
         "babel-eslint": "^8.2.1",
         "babel-plugin-rewire": "^1.1.0",
+        "babel-polyfill": "^6.26.0",
         "babel-preset-env": "^1.6.1",
         "babel-preset-stage-0": "^6.24.1",
         "botbuilder": "^3.14.0",
