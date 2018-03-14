@@ -56,11 +56,10 @@ var startBot = () => {
     });
     bot.recognizer(new LuisRecognizer(LUIS_RECOGNIZER_URLS));
     bot.connector('*', connector);
-    bot.recognizer(new RegExpRecognizer('TestIntent', 'testme'));
     bot.dialog('TestlDialog', function (session) {
         session.endConversation('Ok, I\'m ALIVE!!.');
     }).triggerAction({
-        matches: 'TestIntent'
+        matches: /test/
     });
     console.log('COPMPLETE ');
     return connector.listen();
