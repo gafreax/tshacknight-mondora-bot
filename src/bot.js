@@ -51,16 +51,33 @@ var startBot = () => {
     bot.set('localizerSettings', {
         defaultLocale: DEFAULT_LOCALE
     });
-    bot.set('IIntentRecognizerSetOptions', {
-        intentThreshold: LUIS_INTENTS_THRESHOLD
-    });
-    bot.recognizer(new LuisRecognizer(LUIS_RECOGNIZER_URLS));
     bot.connector('*', connector);
-    bot.dialog('TestlDialog', function (session) {
-        session.endConversation('Ok, I\'m ALIVE!!.');
+    bot.dialog('TestlDialog', (session) => {
+        session.endConversation('Ok, Test are OK');
     }).triggerAction({
         matches: /test/
     });
+
+    bot.dialog('Customers', function (session) {
+        session.send('Lista clienti');
+        axios({
+                method: 'get',
+                url: 'https://rest.reviso.com/customers', // TODO put it in conf
+                responseType: 'stream',
+                headers: {
+                    "X-AppSecretToken": "SxQv1oTvGSstuYIEKpgBDKbzMccUMVDBEhIeRUriY3M1",
+                    "X-AgreementGrantToken": "VEvSFx42bWzeBSRP8PQ92xBvXEhbaWO79k9XsGlMelg1",
+                    "Content-Type": "application/json",
+                    "Cache-Control": "no-cache",
+                },
+            })
+            .then((response) => {
+                response.data.pipe(fs.createWriteStream('ada_lovelace.jpg'))
+            });
+    }).triggerAction({
+        matches: /clienti/
+    });
+
     console.log('COPMPLETE ');
     return connector.listen();
 };
