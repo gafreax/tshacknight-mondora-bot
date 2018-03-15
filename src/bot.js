@@ -58,7 +58,7 @@ var startBot = () => {
         matches: /test/
     });
     bot.dialog('VersionDialog', (session) => {
-        session.endConversation('Version ');
+        session.endConversation('Version ' + version);
     }).triggerAction({
         matches: /version/
     });
@@ -66,17 +66,15 @@ var startBot = () => {
         session.send('Lista clienti');
         axios({
                 method: 'get',
-                url: 'https://rest.reviso.com/customers', // TODO put it in conf
-                responseType: 'stream',
+                url: 'https://rest.reviso.com/customers',
                 headers: {
                     "X-AppSecretToken": "SxQv1oTvGSstuYIEKpgBDKbzMccUMVDBEhIeRUriY3M1",
-                    "X-AgreementGrantToken": "VEvSFx42bWzeBSRP8PQ92xBvXEhbaWO79k9XsGlMelg1",
-                    "Content-Type": "application/json",
-                    "Cache-Control": "no-cache",
+                    "X-AgreementGrantToken": "VEvSFx42bWzeBSRP8PQ92xBvXEhbaWO79k9XsGlMelg1"
                 },
             })
             .then((response) => {
-                session.endConversation(response);
+                response.data.collection.forEach(element => session.send(element.name));
+                session.endConversation("---");
             });
     }).triggerAction({
         matches: /clienti/
