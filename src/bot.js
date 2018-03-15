@@ -91,12 +91,12 @@ var startBot = () => {
                         "X-AgreementGrantToken": "VEvSFx42bWzeBSRP8PQ92xBvXEhbaWO79k9XsGlMelg1"
                     },
                 })
-                .then((response) => {
+                .then(async (response) => {
                     console.log('company ' + company);
                     const companies = response.data.collection;
                     const companyFound = companies.find(element => element.name.toLowerCase().indexOf(company) >= 0);
                     if (companyFound) {
-                        session.send('Consuntivato il lavoro per ' + companyFound.name);
+                        await session.send('Consuntivato il lavoro per ' + companyFound.name);
                         session.userData.worked = {};
                         session.userData.worked.date = new Date();
                         session.userData.worked.company = companyFound;

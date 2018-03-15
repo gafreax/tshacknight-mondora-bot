@@ -18,6 +18,8 @@ var _dotenv = require('dotenv');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
 var azure = require('botbuilder-azure');
 
 
@@ -83,25 +85,53 @@ var startBot = function startBot() {
                 "X-AppSecretToken": "SxQv1oTvGSstuYIEKpgBDKbzMccUMVDBEhIeRUriY3M1",
                 "X-AgreementGrantToken": "VEvSFx42bWzeBSRP8PQ92xBvXEhbaWO79k9XsGlMelg1"
             }
-        }).then(function (response) {
-            console.log('company ' + company);
-            var companies = response.data.collection;
-            var companyFound = companies.find(function (element) {
-                return element.name.toLowerCase().indexOf(company) >= 0;
-            });
-            if (companyFound) {
-                session.send('Consuntivato il lavoro per ' + companyFound.name);
-                session.userData.worked = {};
-                session.userData.worked.date = new Date();
-                session.userData.worked.company = companyFound;
-                console.log(session.userData);
-            } else {
-                session.send('Nessuna azienda corrispondente, selezionane una fra le seguenti');
-                session.send(companies.map(function (cmp) {
-                    return cmp.name;
-                }).join('  \n '));
-            }
-        });
+        }).then(function () {
+            var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(response) {
+                var companies, companyFound;
+                return regeneratorRuntime.wrap(function _callee$(_context) {
+                    while (1) {
+                        switch (_context.prev = _context.next) {
+                            case 0:
+                                console.log('company ' + company);
+                                companies = response.data.collection;
+                                companyFound = companies.find(function (element) {
+                                    return element.name.toLowerCase().indexOf(company) >= 0;
+                                });
+
+                                if (!companyFound) {
+                                    _context.next = 12;
+                                    break;
+                                }
+
+                                _context.next = 6;
+                                return session.send('Consuntivato il lavoro per ' + companyFound.name);
+
+                            case 6:
+                                session.userData.worked = {};
+                                session.userData.worked.date = new Date();
+                                session.userData.worked.company = companyFound;
+                                console.log(session.userData);
+                                _context.next = 14;
+                                break;
+
+                            case 12:
+                                session.send('Nessuna azienda corrispondente, selezionane una fra le seguenti');
+                                session.send(companies.map(function (cmp) {
+                                    return cmp.name;
+                                }).join('  \n '));
+
+                            case 14:
+                            case 'end':
+                                return _context.stop();
+                        }
+                    }
+                }, _callee, undefined);
+            }));
+
+            return function (_x) {
+                return _ref.apply(this, arguments);
+            };
+        }());
     }).triggerAction({
         matches: /oggi\ ho\ lavorato\ per/
     });
