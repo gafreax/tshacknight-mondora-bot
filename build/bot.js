@@ -18,8 +18,6 @@ var _dotenv = require('dotenv');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
-
 var azure = require('botbuilder-azure');
 
 
@@ -40,7 +38,6 @@ var startBot = function startBot() {
     bot.set('storage', tableStorage);
     bot.set('persistConversationData', false);
     bot.set('persistUserData', true);
-
     bot.set('localizerSettings', {
         defaultLocale: _config.DEFAULT_LOCALE
     });
@@ -56,85 +53,39 @@ var startBot = function startBot() {
     }).triggerAction({
         matches: /version/
     });
-    bot.dialog('Customers', function (session) {
-        session.send('Lista clienti');
-        (0, _axios2.default)({
-            method: 'get',
-            url: 'https://rest.reviso.com/customers',
-            headers: {
-                "X-AppSecretToken": "SxQv1oTvGSstuYIEKpgBDKbzMccUMVDBEhIeRUriY3M1",
-                "X-AgreementGrantToken": "VEvSFx42bWzeBSRP8PQ92xBvXEhbaWO79k9XsGlMelg1"
-            }
-        }).then(function (response) {
-            response.data.collection.forEach(function (element) {
-                return session.send(element.name);
-            });
-            session.endConversation("---");
-        });
-    }).triggerAction({
-        matches: /clienti/
-    });
-    bot.dialog('DailyScrum', function (session) {
-        var txt = session.message.text;
-        var phrase = 'oggi ho lavorato per';
-        var company = txt.slice(txt.indexOf(phrase) + phrase.length + 1).toLowerCase();
-        (0, _axios2.default)({
-            method: 'get',
-            url: 'https://rest.reviso.com/customers',
-            headers: {
-                "X-AppSecretToken": "SxQv1oTvGSstuYIEKpgBDKbzMccUMVDBEhIeRUriY3M1",
-                "X-AgreementGrantToken": "VEvSFx42bWzeBSRP8PQ92xBvXEhbaWO79k9XsGlMelg1"
-            }
-        }).then(function () {
-            var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(response) {
-                var companies, companyFound;
-                return regeneratorRuntime.wrap(function _callee$(_context) {
-                    while (1) {
-                        switch (_context.prev = _context.next) {
-                            case 0:
-                                console.log('company ' + company);
-                                companies = response.data.collection;
-                                companyFound = companies.find(function (element) {
-                                    return element.name.toLowerCase().indexOf(company) >= 0;
-                                });
+    // bot.dialog('DailyScrum',
+    //     (session) => {
+    //         const txt = session.message.text;
+    //         const phrase = 'oggi ho lavorato per';
+    //         var company = txt.slice(txt.indexOf(phrase) + phrase.length + 1).toLowerCase();
+    //         axios({
+    //                 method: 'get',
+    //                 url: 'https://rest.reviso.com/customers',
+    //                 headers: {
+    //                     "X-AppSecretToken": "SxQv1oTvGSstuYIEKpgBDKbzMccUMVDBEhIeRUriY3M1",
+    //                     "X-AgreementGrantToken": "VEvSFx42bWzeBSRP8PQ92xBvXEhbaWO79k9XsGlMelg1"
+    //                 },
+    //             })
+    //             .then(async (response) => {
+    //                 console.log('company ' + company);
+    //                 const companies = response.data.collection;
+    //                 const companyFound = companies.find(element => element.name.toLowerCase().indexOf(company) >= 0);
+    //                 if (companyFound) {
+    //                     await session.send('Consuntivato il lavoro per ' + companyFound.name);
+    //                     session.userData.worked = {};
+    //                     session.userData.worked.date = new Date();
+    //                     session.userData.worked.company = companyFound;
+    //                     console.log(session.userData);
+    //                 } else {
+    //                     session.send('Nessuna azienda corrispondente, selezionane una fra le seguenti');
+    //                     session.send(companies.map(cmp => cmp.name).join('  \n '));
+    //                 }
+    //             });
 
-                                if (!companyFound) {
-                                    _context.next = 12;
-                                    break;
-                                }
-
-                                _context.next = 6;
-                                return session.send('Consuntivato il lavoro per ' + companyFound.name);
-
-                            case 6:
-                                session.userData.worked = {};
-                                session.userData.worked.date = new Date();
-                                session.userData.worked.company = companyFound;
-                                console.log(session.userData);
-                                _context.next = 14;
-                                break;
-
-                            case 12:
-                                session.send('Nessuna azienda corrispondente, selezionane una fra le seguenti');
-                                session.send(companies.map(function (cmp) {
-                                    return cmp.name;
-                                }).join('  \n '));
-
-                            case 14:
-                            case 'end':
-                                return _context.stop();
-                        }
-                    }
-                }, _callee, undefined);
-            }));
-
-            return function (_x) {
-                return _ref.apply(this, arguments);
-            };
-        }());
-    }).triggerAction({
-        matches: /oggi\ ho\ lavorato\ per/
-    });
+    //     }
+    // ).triggerAction({
+    //     matches: /oggi\ ho\ lavorato\ per/
+    // });
     console.log('COPMPLETE ');
     return connector.listen();
 };
