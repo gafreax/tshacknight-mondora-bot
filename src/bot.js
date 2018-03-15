@@ -96,7 +96,7 @@ var startBot = () => {
                     const companies = response.data.collection;
                     const companyFound = companies.find(element => element.name.toLowerCase().indexOf(company) >= 0);
                     if (companyFound) {
-                        session.send('Consuntivato il lavoro per ' + companyFound.name);
+                        session.send('Consuntivato il lavoro');
                         session.userData.worked = {};
                         session.userData.worked.date = new Date();
                         session.userData.worked.company = companyFound;
