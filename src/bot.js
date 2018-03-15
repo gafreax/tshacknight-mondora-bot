@@ -76,7 +76,7 @@ var startBot = () => {
                 },
             })
             .then((response) => {
-                response.data.pipe(fs.createWriteStream('ada_lovelace.jpg'))
+                session.endConversation(response);
             });
     }).triggerAction({
         matches: /clienti/
