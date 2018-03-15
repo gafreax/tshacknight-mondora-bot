@@ -18,7 +18,6 @@ express()
     .use(express.static('assets'))
     .post('/api/messages', connectorListener)
     .get('/', (req, res) => {
-        //const html = "<iframe src='https://webchat.botframework.com/embed/ts-mysupport-chatbot?s=MjIHNBVsg2s.cwA.yMM.CflNdwIK6BS5S9lQGO_vIMcrnLa4dWoglQG9R5Bcnw8'></iframe>";
         res.send(`<h2><i>Team System</i> hacknight</h2>  <h5>v:${version}</h5>`);
     })
     .listen(PORT, () => {

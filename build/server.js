@@ -27,8 +27,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var connectorListener = (0, _bot2.default)();
 console.log('LOADING SERVER');
 (0, _express2.default)().use(_express2.default.static('assets')).post('/api/messages', connectorListener).get('/', function (req, res) {
-    var html = "<iframe src='https://webchat.botframework.com/embed/ts-mysupport-chatbot?s=MjIHNBVsg2s.cwA.yMM.CflNdwIK6BS5S9lQGO_vIMcrnLa4dWoglQG9R5Bcnw8'></iframe>";
-    res.send('<h2><i>Team System</i> hacknight</h2>  <h5>v:' + _package.version + '</h5>' + html);
+    res.send('<h2><i>Team System</i> hacknight</h2>  <h5>v:' + _package.version + '</h5>');
 }).listen(_config.PORT, function () {
     console.log('TS Hacknight MONDORA Bot Server listening on ' + _config.HOSTNAME + ':' + _config.PORT);
 });

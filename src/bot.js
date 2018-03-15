@@ -6,6 +6,7 @@ import {
     ChatConnector,
     AzureTableClient,
     Session,
+    Prompts,
     RegExpRecognizer
 } from 'botbuilder';
 import {
@@ -60,39 +61,166 @@ var startBot = () => {
     }).triggerAction({
         matches: /version/
     });
-    // bot.dialog('DailyScrum',
-    //     (session) => {
-    //         const txt = session.message.text;
-    //         const phrase = 'oggi ho lavorato per';
-    //         var company = txt.slice(txt.indexOf(phrase) + phrase.length + 1).toLowerCase();
-    //         axios({
-    //                 method: 'get',
-    //                 url: 'https://rest.reviso.com/customers',
-    //                 headers: {
-    //                     "X-AppSecretToken": "SxQv1oTvGSstuYIEKpgBDKbzMccUMVDBEhIeRUriY3M1",
-    //                     "X-AgreementGrantToken": "VEvSFx42bWzeBSRP8PQ92xBvXEhbaWO79k9XsGlMelg1"
-    //                 },
-    //             })
-    //             .then(async (response) => {
-    //                 console.log('company ' + company);
-    //                 const companies = response.data.collection;
-    //                 const companyFound = companies.find(element => element.name.toLowerCase().indexOf(company) >= 0);
-    //                 if (companyFound) {
-    //                     await session.send('Consuntivato il lavoro per ' + companyFound.name);
-    //                     session.userData.worked = {};
-    //                     session.userData.worked.date = new Date();
-    //                     session.userData.worked.company = companyFound;
-    //                     console.log(session.userData);
-    //                 } else {
-    //                     session.send('Nessuna azienda corrispondente, selezionane una fra le seguenti');
-    //                     session.send(companies.map(cmp => cmp.name).join('  \n '));
-    //                 }
-    //             });
+    bot.dialog('FirstStart', [
+        (session) => {
+            Prompts.text(session, 'Qual\'è il tuo costo giornaliero?');
+        },
+        (session, results) => {
+            session.endDialog(`Memorizzato ${results.response}!`);
+        }
+    ]).triggerAction({
+        matches: /buongiorno/
+    });
+    bot.dialog('DailyScrum',
+        (session) => {
+            const txt = session.message.text;
+            const phrase = 'oggi ho lavorato per';
+            var company = txt.slice(txt.indexOf(phrase) + phrase.length + 1).toLowerCase();
+            axios({
+                    method: 'get',
+                    url: 'https://rest.reviso.com/customers',
+                    headers: {
+                        "X-AppSecretToken": "SxQv1oTvGSstuYIEKpgBDKbzMccUMVDBEhIeRUriY3M1 ",
+                        "X-AgreementGrantToken": "VEvSFx42bWzeBSRP8PQ92xBvXEhbaWO79k9XsGlMelg1 "
+                    },
+                })
+                .then(async (response) => {
+                    console.log('company ' + company);
+                    const companies = response.data.collection;
+                    const companyFound = companies.find(element => element.name.toLowerCase().indexOf(company) >= 0);
+                    if (companyFound) {
+                        session.send('Consuntivato il lavoro per ' + companyFound.name);
+                        session.userData.worked = {};
+                        session.userData.worked.date = new Date();
+                        session.userData.worked.company = companyFound;
 
-    //     }
-    // ).triggerAction({
-    //     matches: /oggi\ ho\ lavorato\ per/
-    // });
+                        axios.post('https://rest.reviso.com/v2/invoices/drafts', {
+
+                            method: 'post',
+                            data: {
+                                date: "2018-01-01",
+                                currency: "EUR",
+                                netAmount: 1000,
+                                vatAmount: 20,
+                                lines: [{
+                                    quantity: 1,
+                                    description: "Fattura giornaliera del cliente " + companyFound.name,
+                                    product: {
+                                        barred: false,
+                                        departmentalDistribution: {
+                                            departmentalDistributionNumber: 1,
+                                            distributionType: "department",
+                                            self: "https://rest.reviso.com/departmental-distribution/departments/1"
+                                        },
+                                        description: "giornata",
+
+                                        name: "giornata",
+
+                                        productGroup: {
+                                            productGroupNumber: 22,
+                                            self: "https://rest.reviso.com/product-groups/22"
+                                        },
+                                        productNumber: "gg",
+                                        salesPrice: 500,
+                                        self: "https://rest.reviso.com/products/gg"
+                                    }
+                                }],
+                                paymentTerms: {
+                                    daysOfCredit: 30,
+                                    name: "30gg data fattura",
+                                    paymentTermsNumber: 4,
+                                    paymentTermsType: "net",
+                                    self: "https://rest.reviso.com/payment-terms/4"
+                                },
+                                recipient: {
+                                    address: "Piazza Spirito Santo",
+                                    balance: 0,
+                                    city: "CATANIA",
+                                    contacts: "https://rest.reviso.com/customers/1/contacts",
+                                    corporateIdentificationNumber: "02250850874",
+                                    country: "ITALIA",
+                                    countryCode: {
+                                        code: "IT",
+                                        self: "https://rest.reviso.com/country-codes/IT"
+                                    },
+                                    currency: "EUR",
+                                    customerGroup: {
+                                        customerGroupNumber: 1,
+                                        self: "https://rest.reviso.com/customer-groups/1"
+                                    },
+                                    email: "francesco.barbera@mondora.com",
+                                    italianCustomerType: "none",
+                                    lastUpdated: "2018-03-14T10:11:15Z",
+                                    paymentTerms: {
+                                        paymentTermsNumber: 9,
+                                        self: "https://rest.reviso.com/payment-terms/9"
+                                    },
+                                    splitPayment: false,
+
+                                    vatNumber: "02250850874",
+                                    vatZone: {
+                                        vatZoneNumber: 1,
+                                        self: "https://rest.reviso.com/vat-zones/1"
+                                    },
+                                    zip: "95124",
+                                    customerNumber: 1,
+                                    name: "Neri Franco & C. snc",
+                                    self: "https://rest.reviso.com/customers/1"
+
+                                },
+                                "customer": {
+                                    address: "Piazza Spirito Santo",
+                                    balance: 0,
+                                    city: "CATANIA",
+                                    contacts: "https://rest.reviso.com/customers/1/contacts",
+                                    corporateIdentificationNumber: "02250850874",
+                                    country: "ITALIA",
+                                    countryCode: {
+                                        code: "IT",
+                                        self: "https://rest.reviso.com/country-codes/IT"
+                                    },
+                                    currency: "EUR",
+                                    customerGroup: {
+                                        customerGroupNumber: 1,
+                                        self: "https://rest.reviso.com/customer-groups/1"
+                                    },
+                                    email: "francesco.barbera@mondora.com",
+                                    italianCustomerType: "none",
+                                    lastUpdated: "2018-03-14T10:11:15Z",
+                                    paymentTerms: {
+                                        paymentTermsNumber: 9,
+                                        self: "https://rest.reviso.com/payment-terms/9"
+                                    },
+                                    splitPayment: false,
+
+                                    vatNumber: "02250850874",
+                                    vatZone: {
+                                        vatZoneNumber: 1,
+                                        self: "https://rest.reviso.com/vat-zones/1"
+                                    },
+                                    zip: "95124",
+                                    customerNumber: 1,
+                                    name: "Neri Franco & C. snc",
+                                    self: "https://rest.reviso.com/customers/1"
+
+
+                                }
+                            }
+                        }).catch(ex => console.log(ex));
+
+
+
+                        console.log(session.userData);
+                    } else {
+                        session.send('Nessuna azienda corrispondente, selezionane una fra le seguenti');
+                        session.send(companies.map(cmp => cmp.name).join('  \n '));
+                    }
+                });
+
+        }
+    ).triggerAction({
+        matches: /oggi\ ho\ lavorato\ per/
+    });
     console.log('COPMPLETE ');
     return connector.listen();
 };
