@@ -8,9 +8,15 @@ var _botbuilder = require('botbuilder');
 
 var _config = require('./config');
 
+var _axios = require('axios');
+
+var _axios2 = _interopRequireDefault(_axios);
+
 var _package = require('../package.json');
 
 var _dotenv = require('dotenv');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var azure = require('botbuilder-azure');
 
@@ -51,7 +57,7 @@ var startBot = function startBot() {
     });
     bot.dialog('Customers', function (session) {
         session.send('Lista clienti');
-        axios({
+        (0, _axios2.default)({
             method: 'get',
             url: 'https://rest.reviso.com/customers', // TODO put it in conf
             responseType: 'stream',

@@ -18,7 +18,7 @@ import {
     AZURE_STORAGE_NAME,
     DEFAULT_LOCALE
 } from './config';
-
+import axios from 'axios';
 import {
     version
 } from '../package.json';
