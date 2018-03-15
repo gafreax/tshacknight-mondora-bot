@@ -57,7 +57,11 @@ var startBot = () => {
     }).triggerAction({
         matches: /test/
     });
-
+    bot.dialog('VersionDialog', (session) => {
+        session.endConversation('Version ' + version);
+    }).triggerAction({
+        matches: /version/
+    });
     bot.dialog('Customers', function (session) {
         session.send('Lista clienti');
         axios({
