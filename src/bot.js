@@ -33,9 +33,7 @@ const connector = new ChatConnector({
     appPassword: MICROSOFT_APP_PASSWORD
 });
 const defaultAction = (session, args, next) => {
-    console.log('default action');
-    var rnd = Math.floor(Math.random() * phrase.length + 1);
-    session.endDialog(phrase[rnd]);
+    session.send('Come posso esserti utile?');
 }
 var startBot = () => {
     console.log('Starting bot...');
@@ -52,6 +50,7 @@ var startBot = () => {
         defaultLocale: DEFAULT_LOCALE
     });
     bot.connector('*', connector);
+
     bot.dialog('TestlDialog', (session) => {
         session.endConversation('Ok, Test are OK');
     }).triggerAction({
@@ -79,7 +78,39 @@ var startBot = () => {
     }).triggerAction({
         matches: /clienti/
     });
+    bot.dialog('DailyScrum',
+        (session) => {
+            const txt = session.message.text;
+            const phrase = 'oggi ho lavorato per';
+            var company = txt.slice(txt.indexOf(phrase) + phrase.length + 1).toLowerCase();
+            axios({
+                    method: 'get',
+                    url: 'https://rest.reviso.com/customers',
+                    headers: {
+                        "X-AppSecretToken": "SxQv1oTvGSstuYIEKpgBDKbzMccUMVDBEhIeRUriY3M1",
+                        "X-AgreementGrantToken": "VEvSFx42bWzeBSRP8PQ92xBvXEhbaWO79k9XsGlMelg1"
+                    },
+                })
+                .then((response) => {
+                    console.log('company ' + company);
+                    const companies = response.data.collection;
+                    const companyFound = companies.find(element => element.name.toLowerCase().indexOf(company) >= 0);
+                    if (companyFound) {
+                        session.send('Consuntivato il lavoro per ' + companyFound.name);
+                        session.userData.worked = {};
+                        session.userData.worked.date = new Date();
+                        session.userData.worked.company = companyFound;
+                        console.log(session.userData);
+                    } else {
+                        session.send('Nessuna azienda corrispondente, selezionane una fra le seguenti');
+                        session.send(companies.join('  \n '));
+                    }
+                });
 
+        }
+    ).triggerAction({
+        matches: /oggi\ ho\ lavorato\ per/
+    });
     console.log('COPMPLETE ');
     return connector.listen();
 };
