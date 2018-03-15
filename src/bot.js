@@ -66,13 +66,13 @@ var startBot = () => {
             Prompts.text(session, 'Qual\'è il tuo costo giornaliero?');
         },
         (session, results) => {
-            session.endDialog(`Memorizzato ${results.response}!`);
+            session.endDialog(`Memorizzato il costo di ${results.response} EUR!`);
         }
     ]).triggerAction({
         matches: /buongiorno/
     });
-    bot.dialog('DailyScrum',
-        (session) => {
+    bot.dialog('DailyScrumW', [
+        session => {
             const txt = session.message.text;
             const phrase = 'oggi ho lavorato per';
             var company = txt.slice(txt.indexOf(phrase) + phrase.length + 1).toLowerCase();
@@ -93,135 +93,30 @@ var startBot = () => {
                         session.userData.worked = {};
                         session.userData.worked.date = new Date();
                         session.userData.worked.company = companyFound;
-
-                        axios.post('https://rest.reviso.com/v2/invoices/drafts', {
-
-                            method: 'post',
-                            data: {
-                                date: "2018-01-01",
-                                currency: "EUR",
-                                netAmount: 1000,
-                                vatAmount: 20,
-                                lines: [{
-                                    quantity: 1,
-                                    description: "Fattura giornaliera del cliente " + companyFound.name,
-                                    product: {
-                                        barred: false,
-                                        departmentalDistribution: {
-                                            departmentalDistributionNumber: 1,
-                                            distributionType: "department",
-                                            self: "https://rest.reviso.com/departmental-distribution/departments/1"
-                                        },
-                                        description: "giornata",
-
-                                        name: "giornata",
-
-                                        productGroup: {
-                                            productGroupNumber: 22,
-                                            self: "https://rest.reviso.com/product-groups/22"
-                                        },
-                                        productNumber: "gg",
-                                        salesPrice: 500,
-                                        self: "https://rest.reviso.com/products/gg"
-                                    }
-                                }],
-                                paymentTerms: {
-                                    daysOfCredit: 30,
-                                    name: "30gg data fattura",
-                                    paymentTermsNumber: 4,
-                                    paymentTermsType: "net",
-                                    self: "https://rest.reviso.com/payment-terms/4"
-                                },
-                                recipient: {
-                                    address: "Piazza Spirito Santo",
-                                    balance: 0,
-                                    city: "CATANIA",
-                                    contacts: "https://rest.reviso.com/customers/1/contacts",
-                                    corporateIdentificationNumber: "02250850874",
-                                    country: "ITALIA",
-                                    countryCode: {
-                                        code: "IT",
-                                        self: "https://rest.reviso.com/country-codes/IT"
-                                    },
-                                    currency: "EUR",
-                                    customerGroup: {
-                                        customerGroupNumber: 1,
-                                        self: "https://rest.reviso.com/customer-groups/1"
-                                    },
-                                    email: "francesco.barbera@mondora.com",
-                                    italianCustomerType: "none",
-                                    lastUpdated: "2018-03-14T10:11:15Z",
-                                    paymentTerms: {
-                                        paymentTermsNumber: 9,
-                                        self: "https://rest.reviso.com/payment-terms/9"
-                                    },
-                                    splitPayment: false,
-
-                                    vatNumber: "02250850874",
-                                    vatZone: {
-                                        vatZoneNumber: 1,
-                                        self: "https://rest.reviso.com/vat-zones/1"
-                                    },
-                                    zip: "95124",
-                                    customerNumber: 1,
-                                    name: "Neri Franco & C. snc",
-                                    self: "https://rest.reviso.com/customers/1"
-
-                                },
-                                "customer": {
-                                    address: "Piazza Spirito Santo",
-                                    balance: 0,
-                                    city: "CATANIA",
-                                    contacts: "https://rest.reviso.com/customers/1/contacts",
-                                    corporateIdentificationNumber: "02250850874",
-                                    country: "ITALIA",
-                                    countryCode: {
-                                        code: "IT",
-                                        self: "https://rest.reviso.com/country-codes/IT"
-                                    },
-                                    currency: "EUR",
-                                    customerGroup: {
-                                        customerGroupNumber: 1,
-                                        self: "https://rest.reviso.com/customer-groups/1"
-                                    },
-                                    email: "francesco.barbera@mondora.com",
-                                    italianCustomerType: "none",
-                                    lastUpdated: "2018-03-14T10:11:15Z",
-                                    paymentTerms: {
-                                        paymentTermsNumber: 9,
-                                        self: "https://rest.reviso.com/payment-terms/9"
-                                    },
-                                    splitPayment: false,
-
-                                    vatNumber: "02250850874",
-                                    vatZone: {
-                                        vatZoneNumber: 1,
-                                        self: "https://rest.reviso.com/vat-zones/1"
-                                    },
-                                    zip: "95124",
-                                    customerNumber: 1,
-                                    name: "Neri Franco & C. snc",
-                                    self: "https://rest.reviso.com/customers/1"
-
-
-                                }
-                            }
-                        }).catch(ex => console.log(ex));
-
-
-
-                        console.log(session.userData);
+                        Prompts.text(session, 'Qual\'è la tariffa per questo cliente?');
                     } else {
                         session.send('Nessuna azienda corrispondente, selezionane una fra le seguenti');
                         session.send(companies.map(cmp => cmp.name).join('  \n '));
                     }
                 });
 
+        },
+        (session, results) => {
+            session.endDialog(`Tariffa di ${results.response} EUR memorizzata!`);
         }
-    ).triggerAction({
+    ]).triggerAction({
         matches: /oggi\ ho\ lavorato\ per/
     });
-    console.log('COPMPLETE ');
+    bot.dialog('DailyScrumS',
+        session => {
+            const txt = session.message.text;
+            const phrase = 'oggi ho fatto formazione su';
+            var argument = txt.slice(txt.indexOf(phrase) + phrase.length + 1).toLowerCase();
+            session.send('Consuntivata la formazione su ' + argument);
+        }
+    ).triggerAction({
+        matches: /oggi\ ho\ fatto\ formazione\ su/
+    });
     return connector.listen();
 };
 
