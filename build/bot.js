@@ -44,7 +44,11 @@ var startBot = function startBot() {
     }).triggerAction({
         matches: /test/
     });
-
+    bot.dialog('VersionDialog', function (session) {
+        session.endConversation('Version ');
+    }).triggerAction({
+        matches: /version/
+    });
     bot.dialog('Customers', function (session) {
         session.send('Lista clienti');
         axios({
@@ -58,7 +62,7 @@ var startBot = function startBot() {
                 "Cache-Control": "no-cache"
             }
         }).then(function (response) {
-            response.data.pipe(fs.createWriteStream('ada_lovelace.jpg'));
+            session.endConversation(response);
         });
     }).triggerAction({
         matches: /clienti/

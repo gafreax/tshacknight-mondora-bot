@@ -9,8 +9,6 @@ export const MICROSOFT_APP_ID = process.env.MICROSOFT_APP_ID;
 export const MICROSOFT_APP_PASSWORD = process.env.MICROSOFT_APP_PASSWORD;
 export const TS_ENDPOINT = process.env.TS_ENDPOINT;
 export const LOG_FILE = process.env.LOG_FILE || './tshacknight-mondora-biot.log';
-export const LUIS_RECOGNIZER_URLS = process.env.LUIS_RECOGNIZER_URLS || '';
-export const LUIS_INTENTS_THRESHOLD = process.env.LUIS_INTENTS_THRESHOLD || '0.7';
 export const AZURE_TABLE_NAME = 'tshacknightbot'; // You define
 export const AZURE_STORAGE_NAME = 'mysupportstorage'; // Obtain from Azure Portal
 export const AZURE_STORAGE_KEY = 'akjAnBVNZoNna55T3U1A5QRuX/uXOXykbejEnxU3YTrMg2ZzKY3tJkqcCdAGO/RpkW54+YX3Paml9W36yFe3/g==';

@@ -58,7 +58,7 @@ var startBot = () => {
         matches: /test/
     });
     bot.dialog('VersionDialog', (session) => {
-        session.endConversation('Version ' + version);
+        session.endConversation('Version ');
     }).triggerAction({
         matches: /version/
     });
