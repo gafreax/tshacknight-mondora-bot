@@ -1,7 +1,7 @@
 {
     "name": "tshacknight-mondora-bot",
     "description": "POC Bot 4 TS HackNIght",
-    "version": "0.9.3",
+    "version": "0.9.4",
     "license": "Gpl 2",
     "main": "build/server.js",
     "engines": {

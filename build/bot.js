@@ -90,14 +90,16 @@ var startBot = function startBot() {
                 return element.name.toLowerCase().indexOf(company) >= 0;
             });
             if (companyFound) {
-                session.send('Consuntivato il lavoro');
+                session.send('Consuntivato il lavoro per ' + companyFound.name);
                 session.userData.worked = {};
                 session.userData.worked.date = new Date();
                 session.userData.worked.company = companyFound;
                 console.log(session.userData);
             } else {
                 session.send('Nessuna azienda corrispondente, selezionane una fra le seguenti');
-                session.send(companies.join('  \n '));
+                session.send(companies.map(function (cmp) {
+                    return cmp.name;
+                }).join('  \n '));
             }
         });
     }).triggerAction({
